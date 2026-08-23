@@ -21,8 +21,13 @@ class AgentState(TypedDict):
     report: str
 
 
-# Initialize LLM
-llm = ChatGroq(model="gemma2-9b-it", temperature=0.7)
+# Initialize LLM with fallback to mock mode
+try:
+    llm = ChatGroq(model="llama-3.1-70b-versatile", temperature=0.7)
+    print("Using Groq LLM")
+except Exception as e:
+    print(f"Groq unavailable, using mock mode: {str(e)[:100]}")
+    llm = None
 
 # Initialize memory
 memory = ProjectMemory("memory")
