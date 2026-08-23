@@ -24,6 +24,7 @@ def get_status():
         return jsonify({
             "success": True,
             "report": result["report"],
+            "blockers": result["blockers"],
             "blockers_count": len(result["blockers"]),
             "health": result["analysis"].get("health_score", {}),
             "timestamp": result["timestamp"]
