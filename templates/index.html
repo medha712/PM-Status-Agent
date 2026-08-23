@@ -587,8 +587,8 @@
         <!-- Report Display -->
         <div class="report-display" id="report-display">
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('report')">Report</button>
-                <button class="tab" onclick="switchTab('memory')">Memory</button>
+                <button class="tab active" onclick="switchTab('report', event)">Report</button>
+                <button class="tab" onclick="switchTab('memory', event)">Memory</button>
             </div>
             <div id="report" class="tab-content active">
                 <div class="report-content" id="report-content"></div>
@@ -822,11 +822,16 @@
                 });
         }
 
-        function switchTab(tab) {
+        function switchTab(tab, event) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-            event.target.classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback: mark the correct tab as active
+                document.querySelector(`button[onclick*="${tab}"]`)?.classList.add('active');
+            }
             document.getElementById(tab).classList.add('active');
             currentTab = tab;
 
