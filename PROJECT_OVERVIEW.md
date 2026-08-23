@@ -1,4 +1,4 @@
-# PM Status Agent - Project Overview
+# Status Manager - Project Overview
 
 ## What You've Got
 

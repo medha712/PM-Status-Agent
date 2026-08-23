@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get your PM Status Agent running in 5 minutes!
+Get Status Manager running in 5 minutes!
 
 ## 1️⃣ Install & Setup
 

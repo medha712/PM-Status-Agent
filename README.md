@@ -1,4 +1,4 @@
-# 📊 PM Status Agent
+# 📊 Status Manager
 
 An intelligent project management status agent that connects to Jira, Asana, and Notion to provide real-time sprint tracking, blocker identification, and week-over-week trend analysis.
 

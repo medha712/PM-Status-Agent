@@ -1,4 +1,4 @@
-# 📊 Sample Weekly Project Status Report
+# 📊 Sample Status Report
 **Generated:** 2026-08-23 14:30:00
 
 ## Health Overview
