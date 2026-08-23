@@ -127,78 +127,78 @@ def generate_full_report(analysis: Dict, blockers: list, mem: ProjectMemory) -> 
     blocker_analysis = analysis["blocker_analysis"]
 
     report = f"""
-# 📊 Weekly Project Status Report
-**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+# Weekly Project Status Report
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ## Health Overview
-- **Overall Health:** {health['score']}% ({health['status']}) {health['trend']}
-- **Completed Items:** {health['completed']}/{health['total_items']}
-- **Total Blockers:** {analysis['total_blockers']}
+- Overall Health: {health['score']}% ({health['status']}) {health['trend']}
+- Completed Items: {health['completed']}/{health['total_items']}
+- Total Blockers: {analysis['total_blockers']}
 
 ## Platform Progress
 
 ### Jira Sprint
-- **Completion:** {jira_prog['percentage']:.1f}% ({jira_prog['done']}/{jira_prog['total']} done)
-- **Status:** {'On Track' if jira_prog['percentage'] >= 70 else 'At Risk' if jira_prog['percentage'] >= 50 else 'Critical'}
+- Completion: {jira_prog['percentage']:.1f}% ({jira_prog['done']}/{jira_prog['total']} done)
+- Status: {'On Track' if jira_prog['percentage'] >= 70 else 'At Risk' if jira_prog['percentage'] >= 50 else 'Critical'}
 
 ### Asana Projects
-- **Completion:** {asana_prog['percentage']:.1f}% ({asana_prog['completed']}/{asana_prog['total']} completed)
-- **At Risk:** {asana_prog['at_risk']} tasks
+- Completion: {asana_prog['percentage']:.1f}% ({asana_prog['completed']}/{asana_prog['total']} completed)
+- At Risk: {asana_prog['at_risk']} tasks
 
-## 🚨 Blockers ({len(blockers)} total)
+## BLOCKERS ({len(blockers)} total)
 {blocker_analysis['recommendation']}
 
 ### Top Blockers:
 """
     for i, blocker in enumerate(blockers[:5], 1):
-        report += f"\n{i}. **{blocker['title']}** ({blocker['source']})\n"
-        report += f"   - Type: {blocker['type']}\n"
-        report += f"   - Days Blocked: {blocker.get('days_blocked', 0)}\n"
-        report += f"   - Assignee: {blocker.get('assignee', 'Unassigned')}\n"
+        report += f"\n{i}. {blocker['title']} ({blocker['source']})\n"
+        report += f"   Type: {blocker['type']}\n"
+        report += f"   Days Blocked: {blocker.get('days_blocked', 0)}\n"
+        report += f"   Assignee: {blocker.get('assignee', 'Unassigned')}\n"
 
     chronic = mem.find_chronic_blockers(min_weeks=2)
     if chronic:
-        report += f"\n## ⚠️ Chronic Issues ({len(chronic)} items stuck 2+ weeks)\n"
+        report += f"\n## CHRONIC ISSUES ({len(chronic)} items stuck 2+ weeks)\n"
         for item in chronic[:3]:
-            report += f"\n- **{item['title']}** - {item['weeks_stuck']} weeks\n"
+            report += f"\n- {item['title']} - {item['weeks_stuck']} weeks\n"
             report += f"  First seen: {item['first_seen']}\n"
 
     report += f"\n## Risk Flags\n"
     if health['score'] < 60:
-        report += "🔴 **CRITICAL**: Health score below 60%\n"
+        report += "[CRITICAL] Health score below 60%\n"
     if blocker_analysis['trend'] == 'increasing':
-        report += "🔴 **WARNING**: Blockers increasing\n"
+        report += "[WARNING] Blockers increasing\n"
     if chronic and len(chronic) > 3:
-        report += f"🟡 **ALERT**: {len(chronic)} items stuck multiple weeks\n"
+        report += f"[ALERT] {len(chronic)} items stuck multiple weeks\n"
     if jira_prog['percentage'] < 50:
-        report += "🟡 **ALERT**: Jira sprint significantly behind\n"
+        report += "[ALERT] Jira sprint significantly behind\n"
 
     return report
 
 
 def generate_risk_report(analysis: Dict, blockers: list) -> str:
     """Generate risk-focused report."""
-    report = "# 🚨 Risk Assessment Report\n\n"
+    report = "# Risk Assessment Report\n\n"
 
     health = analysis["health_score"]
     if health['score'] < 60:
-        report += f"🔴 **CRITICAL RISK**: Project health at {health['score']}%\n\n"
+        report += f"[CRITICAL RISK] Project health at {health['score']}%\n\n"
     elif health['score'] < 75:
-        report += f"🟡 **MEDIUM RISK**: Project health at {health['score']}%\n\n"
+        report += f"[MEDIUM RISK] Project health at {health['score']}%\n\n"
 
     blocker_analysis = analysis["blocker_analysis"]
     if blocker_analysis['trend'] == 'increasing':
-        report += f"⚠️ Blocker count increasing: {blocker_analysis['current_blockers']} (avg: {blocker_analysis['average']})\n"
+        report += f"Blocker count increasing: {blocker_analysis['current_blockers']} (avg: {blocker_analysis['average']})\n"
 
     # Risk by priority
     critical_blockers = [b for b in blockers if b.get("priority") == "Critical"]
     high_blockers = [b for b in blockers if b.get("priority") == "High"]
 
-    report += f"\n**Critical Blockers:** {len(critical_blockers)}\n"
+    report += f"\nCritical Blockers: {len(critical_blockers)}\n"
     for b in critical_blockers[:3]:
         report += f"- {b['title']} ({b['source']})\n"
 
-    report += f"\n**High Priority Blockers:** {len(high_blockers)}\n"
+    report += f"\nHigh Priority Blockers: {len(high_blockers)}\n"
 
     return report
 
@@ -207,16 +207,16 @@ def generate_stuck_items_report(mem: ProjectMemory) -> str:
     """Report on items stuck multiple weeks."""
     chronic = mem.find_chronic_blockers(min_weeks=2)
 
-    report = "# 📌 Items Stuck Multiple Weeks\n\n"
+    report = "# Items Stuck Multiple Weeks\n\n"
 
     if not chronic:
-        report += "✅ No items stuck for 2+ weeks. Great progress!\n"
+        report += "No items stuck for 2+ weeks. Great progress!\n"
         return report
 
     report += f"Found {len(chronic)} items stuck in blockers for 2+ weeks:\n\n"
 
     for item in chronic:
-        report += f"**{item['title']}**\n"
+        report += f"{item['title']}\n"
         report += f"- Source: {item['source']}\n"
         report += f"- Type: {item['type']}\n"
         report += f"- Weeks Stuck: {item['weeks_stuck']}\n"
@@ -228,24 +228,24 @@ def generate_stuck_items_report(mem: ProjectMemory) -> str:
 
 def generate_trend_report(mem: ProjectMemory, analysis: Dict) -> str:
     """Generate week-over-week trend report."""
-    report = "# 📈 Week-over-Week Trends\n\n"
+    report = "# Week-over-Week Trends\n\n"
 
     health_history = mem.trends.get("health_score_history", [])
     if health_history:
-        report += "## Health Score Trend\n"
+        report += "Health Score Trend\n"
         for entry in health_history[-4:]:
-            bar = "█" * int(entry["health"] / 10) + "░" * (10 - int(entry["health"] / 10))
-            report += f"{entry['week']}: [{bar}] {entry['health']:.1f}%\n"
+            bar = "[" + ("=" * int(entry["health"] / 10)) + (" " * (10 - int(entry["health"] / 10))) + "]"
+            report += f"{entry['week']}: {bar} {entry['health']:.1f}%\n"
 
     blocker_trend = mem.trends.get("blocker_trends", [])
     if blocker_trend:
-        report += "\n## Blocker Count Trend\n"
+        report += "\nBlocker Count Trend\n"
         for entry in blocker_trend[-4:]:
             report += f"{entry['week']}: {entry['blocker_count']} blockers\n"
 
     velocity = mem.trends.get("velocity_history", [])
     if velocity:
-        report += "\n## Completion Velocity\n"
+        report += "\nCompletion Velocity\n"
         for entry in velocity[-4:]:
             report += f"{entry['week']}: {entry['completed']} items completed\n"
 
