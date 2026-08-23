@@ -605,8 +605,10 @@
 
         // Initialize on load
         window.onload = () => {
-            loadDashboard();
-            initCharts();
+            setTimeout(() => {
+                initCharts();
+                loadDashboard();
+            }, 100);
         };
 
         function showLoading(show = true) {
